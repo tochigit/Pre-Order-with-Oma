@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Preorder With Oma — Luxury Boutique</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #FAF6F0;
+      --warm-white: #FDF9F4;
+      --champagne: #E8D5B0;
+      --gold: #C4962A;
+      --gold-light: #D4A843;
+      --deep-brown: #2C1A0E;
+      --mid-brown: #5C3D22;
+      --warm-gray: #8A7A6A;
+      --text: #1A0F08;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Jost', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.2rem 4rem;
+      background: rgba(250,246,240,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(196,150,42,0.2);
+    }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      color: var(--deep-brown);
+    }
+    .nav-logo span { color: var(--gold); font-style: italic; }
+    .nav-links { display: flex; gap: 2.5rem; }
+    .nav-links a {
+      text-decoration: none;
+      font-size: 0.75rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--mid-brown);
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 10rem 4rem 6rem 6rem;
+      position: relative;
+      z-index: 2;
+    }
+    .hero-eyebrow {
+      font-size: 0.68rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+      display: flex; align-items: center; gap: 0.8rem;
+    }
+    .hero-eyebrow::before {
+      content: ''; display: block;
+      width: 30px; height: 1px;
+      background: var(--gold);
+    }
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.8rem, 5vw, 4.2rem);
+      font-weight: 300;
+      line-height: 1.15;
+      color: var(--deep-brown);
+      margin-bottom: 1.2rem;
+    }
+    .hero-title em {
+      font-style: italic;
+      color: var(--gold);
+    }
+    .hero-sub {
+      font-size: 0.9rem;
+      font-weight: 300;
+      color: var(--warm-gray);
+      letter-spacing: 0.04em;
+      line-height: 1.7;
+      max-width: 380px;
+      margin-bottom: 2.8rem;
+    }
+    .hero-cta {
+      display: flex; flex-wrap: wrap; gap: 1rem;
+    }
+    .btn-primary {
+      display: inline-block; text-decoration: none;
+      background: var(--deep-brown);
+      color: var(--champagne);
+      padding: 0.85rem 2.2rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      border: 1px solid var(--deep-brown);
+      transition: all 0.35s;
+    }
+    .btn-primary:hover {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: var(--deep-brown);
+    }
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      text-decoration: none;
+      color: var(--mid-brown);
+      padding: 0.85rem 2rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      border: 1px solid var(--champagne);
+      transition: all 0.35s;
+    }
+    .btn-outline:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    /* hero right — image side */
+    .hero-right {
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-image-bg {
+      position: absolute; inset: 0;
+      background:
+        linear-gradient(135deg, rgba(196,150,42,0.12) 0%, transparent 60%),
+        linear-gradient(to bottom right, #D4A843 0%, #8B5E1A 30%, #2C1A0E 100%);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .hero-placeholder {
+      font-size: 9rem;
+      filter: drop-shadow(0 30px 60px rgba(0,0,0,0.4));
+      animation: floatBag 4s ease-in-out infinite;
+    }
+    @keyframes floatBag {
+      0%, 100% { transform: translateY(0px) rotate(-3deg); }
+      50% { transform: translateY(-18px) rotate(3deg); }
+    }
+    .hero-badge {
+      position: absolute; bottom: 3rem; left: -1.5rem;
+      background: var(--warm-white);
+      border: 1px solid var(--champagne);
+      padding: 1.2rem 1.5rem;
+      box-shadow: 0 20px 50px rgba(44,26,14,0.15);
+    }
+    .badge-label {
+      font-size: 0.62rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--warm-gray);
+      margin-bottom: 0.2rem;
+    }
+    .badge-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem;
+      font-weight: 500;
+      color: var(--deep-brown);
+    }
+
+    /* ornamental line */
+    .ornament {
+      display: flex; align-items: center; gap: 1rem;
+      margin: 3rem 0 2rem;
+      color: var(--gold);
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+    }
+    .ornament::before, .ornament::after {
+      content: ''; flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--champagne));
+    }
+    .ornament::after {
+      background: linear-gradient(to left, transparent, var(--champagne));
+    }
+
+    /* ── CATEGORIES ── */
+    .section { padding: 5rem 6rem; }
+    .section-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.8rem;
+    }
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 3.5vw, 3rem);
+      font-weight: 300;
+      color: var(--deep-brown);
+      margin-bottom: 3rem;
+    }
+    .section-title em { font-style: italic; color: var(--gold); }
+
+    .categories-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+    }
+    .cat-card {
+      background: var(--warm-white);
+      border: 1px solid var(--champagne);
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.4s;
+      position: relative;
+      overflow: hidden;
+    }
+    .cat-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(196,150,42,0.06), transparent);
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .cat-card:hover { transform: translateY(-6px); border-color: var(--gold); box-shadow: 0 20px 50px rgba(44,26,14,0.1); }
+    .cat-card:hover::before { opacity: 1; }
+    .cat-icon { font-size: 2.5rem; margin-bottom: 1rem; display: block; }
+    .cat-name {
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--mid-brown);
+      font-weight: 500;
+    }
+    .cat-card.featured .cat-name { color: var(--gold); }
+
+    /* ── PRODUCTS ── */
+    .products-section { background: var(--warm-white); }
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2rem;
+    }
+    .product-card {
+      cursor: pointer;
+      group: true;
+    }
+    .product-image {
+      aspect-ratio: 3/4;
+      background: linear-gradient(135deg, var(--champagne) 0%, #C8A870 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 4rem;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 1.2rem;
+      transition: all 0.4s;
+    }
+    .product-card:hover .product-image {
+      box-shadow: 0 25px 60px rgba(44,26,14,0.2);
+      transform: translateY(-4px);
+    }
+    .product-tag {
+      position: absolute; top: 1rem; left: 1rem;
+      background: var(--deep-brown);
+      color: var(--champagne);
+      font-size: 0.58rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.7rem;
+    }
+    .product-overlay {
+      position: absolute; inset: 0;
+      background: rgba(44,26,14,0.6);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .product-card:hover .product-overlay { opacity: 1; }
+    .overlay-btn {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--champagne);
+      border: 1px solid var(--champagne);
+      padding: 0.6rem 1.4rem;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .overlay-btn:hover { background: var(--gold); border-color: var(--gold); color: var(--deep-brown); }
+    .product-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem;
+      font-weight: 400;
+      color: var(--deep-brown);
+      margin-bottom: 0.3rem;
+    }
+    .product-price {
+      font-size: 0.85rem;
+      color: var(--gold);
+      font-weight: 500;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── WHY ── */
+    .why-section {
+      background: var(--deep-brown);
+      color: var(--cream);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+    .why-left {
+      padding: 6rem;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .why-left .section-label { color: var(--gold); }
+    .why-left .section-title { color: var(--cream); margin-bottom: 2.5rem; }
+    .why-list { list-style: none; display: flex; flex-direction: column; gap: 1.5rem; }
+    .why-item {
+      display: flex; align-items: flex-start; gap: 1rem;
+      font-size: 0.9rem;
+      font-weight: 300;
+      color: rgba(250,246,240,0.85);
+      letter-spacing: 0.03em;
+      line-height: 1.6;
+    }
+    .why-check {
+      width: 22px; height: 22px; flex-shrink: 0;
+      border: 1px solid var(--gold);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--gold);
+      font-size: 0.7rem;
+      margin-top: 1px;
+    }
+    .why-right {
+      background: linear-gradient(135deg, #3D2210 0%, #1A0F08 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .why-right::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(circle at 60% 40%, rgba(196,150,42,0.15) 0%, transparent 65%);
+    }
+
+    /* ── CONTACT ── */
+    .contact-section {
+      background: linear-gradient(135deg, #FAF6F0 0%, #F0E8D8 100%);
+      padding: 5rem 6rem;
+      text-align: center;
+    }
+    .contact-section .section-title { text-align: center; margin-bottom: 0.8rem; }
+    .contact-sub {
+      font-size: 0.85rem;
+      color: var(--warm-gray);
+      font-weight: 300;
+      margin-bottom: 3rem;
+      letter-spacing: 0.05em;
+    }
+    .contact-links {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 1.2rem;
+    }
+    .contact-link {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      text-decoration: none;
+      padding: 0.9rem 2rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      transition: all 0.3s;
+    }
+    .contact-link.whatsapp {
+      background: var(--deep-brown);
+      color: var(--champagne);
+      border: 1px solid var(--deep-brown);
+    }
+    .contact-link.whatsapp:hover { background: #25D366; border-color: #25D366; color: white; }
+    .contact-link.instagram {
+      border: 1px solid var(--champagne);
+      color: var(--mid-brown);
+    }
+    .contact-link.instagram:hover { border-color: var(--gold); color: var(--gold); }
+    .contact-link.phone {
+      border: 1px solid var(--champagne);
+      color: var(--mid-brown);
+    }
+    .contact-link.phone:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--deep-brown);
+      color: rgba(250,246,240,0.5);
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+    footer span { color: var(--gold); }
+
+    /* ── ANIMATIONS ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1024px) {
+      nav { padding: 1rem 2rem; }
+      .nav-links { display: none; }
+      .hero { grid-template-columns: 1fr; min-height: auto; }
+      .hero-left { padding: 8rem 2.5rem 3rem; }
+      .hero-right { min-height: 50vw; }
+      .hero-badge { bottom: 2rem; left: 1rem; }
+      .section { padding: 4rem 2.5rem; }
+      .categories-grid { grid-template-columns: repeat(2, 1fr); }
+      .products-grid { grid-template-columns: repeat(2, 1fr); }
+      .why-section { grid-template-columns: 1fr; }
+      .why-left { padding: 4rem 2.5rem; }
+      .why-right { min-height: 200px; }
+      .contact-section { padding: 4rem 2.5rem; }
+    }
+
+    @media (max-width: 600px) {
+      .hero-title { font-size: 2.4rem; }
+      .hero-cta { flex-direction: column; }
+      .btn-primary, .btn-outline { text-align: center; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-logo">Preorder <span>With Oma</span></div>
+    <div class="nav-links">
+      <a href="#categories">Collections</a>
+      <a href="#products">Featured</a>
+      <a href="#why">About</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-left reveal">
+      <p class="hero-eyebrow">Luxury Preorder Service</p>
+      <h1 class="hero-title">
+        Luxury Handbags,<br>
+        Shoes &amp; <em>Accessories</em><br>
+        Delivered To You
+      </h1>
+      <p class="hero-sub">Authentic pieces carefully sourced from China, curated with an eye for elegance and quality you can trust. Perfect for students and working professionals.</p>
+      <div class="hero-cta">
+        <a href="#products" class="btn-primary">Shop Collection</a>
+        <a href="https://wa.me/2347079430805" class="btn-outline">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.117 1.526 5.845L0 24l6.335-1.507A11.953 11.953 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.807 9.807 0 01-5.015-1.376l-.36-.214-3.76.894.937-3.657-.234-.375A9.817 9.817 0 012.182 12C2.182 6.58 6.58 2.182 12 2.182c5.42 0 9.818 4.398 9.818 9.818 0 5.42-4.398 9.818-9.818 9.818z"/></svg>
+          Chat on WhatsApp
+        </a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-image-bg">
+        <div class="hero-placeholder">👜</div>
+        <div class="hero-badge">
+          <div class="badge-label">Authentic &amp; Sourced</div>
+          <div class="badge-value">Direct Import</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="categories">
+    <p class="section-label reveal">Browse By Category</p>
+    <h2 class="section-title reveal reveal-delay-1">Our <em>Collections</em></h2>
+    <div class="categories-grid">
+      <div class="cat-card reveal reveal-delay-1">
+        <span class="cat-icon">👜</span>
+        <p class="cat-name">Handbags</p>
+      </div>
+      <div class="cat-card reveal reveal-delay-2">
+        <span class="cat-icon">👠</span>
+        <p class="cat-name">Shoes</p>
+      </div>
+      <div class="cat-card reveal reveal-delay-3">
+        <span class="cat-icon">⌚</span>
+        <p class="cat-name">Accessories</p>
+      </div>
+      <div class="cat-card featured reveal reveal-delay-4">
+        <span class="cat-icon">✨</span>
+        <p class="cat-name">New Arrivals</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section products-section" id="products">
+    <p class="section-label reveal">Handpicked For You</p>
+    <h2 class="section-title reveal reveal-delay-1">Featured <em>Products</em></h2>
+    <div class="products-grid">
+      <div class="product-card reveal reveal-delay-1">
+        <div class="product-image">
+          <span class="product-tag">Bestseller</span>
+          👜
+          <div class="product-overlay"><span class="overlay-btn">Preorder Now</span></div>
+        </div>
+        <p class="product-name">Luxury Handbag</p>
+        <p class="product-price">₦185,000</p>
+      </div>
+      <div class="product-card reveal reveal-delay-2">
+        <div class="product-image" style="background: linear-gradient(135deg, #D4B896 0%, #A07040 100%);">
+          <span class="product-tag">New</span>
+          👠
+          <div class="product-overlay"><span class="overlay-btn">Preorder Now</span></div>
+        </div>
+        <p class="product-name">Designer Heels</p>
+        <p class="product-price">₦65,000</p>
+      </div>
+      <div class="product-card reveal reveal-delay-3">
+        <div class="product-image" style="background: linear-gradient(135deg, #C8B090 0%, #8B6040 100%);">
+          ⌚
+          <div class="product-overlay"><span class="overlay-btn">Preorder Now</span></div>
+        </div>
+        <p class="product-name">Women's Watch</p>
+        <p class="product-price">₦25,000</p>
+      </div>
+      <div class="product-card reveal reveal-delay-4">
+        <div class="product-image" style="background: linear-gradient(135deg, #E0C8A0 0%, #9A7040 100%);">
+          🕶️
+          <div class="product-overlay"><span class="overlay-btn">Preorder Now</span></div>
+        </div>
+        <p class="product-name">Chic Sunglasses</p>
+        <p class="product-price">₦5,000</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="why-section" id="why">
+    <div class="why-left">
+      <p class="section-label reveal">Our Promise</p>
+      <h2 class="section-title reveal reveal-delay-1">Why Preorder<br><em>With Oma?</em></h2>
+      <ul class="why-list">
+        <li class="why-item reveal reveal-delay-1">
+          <span class="why-check">✓</span>
+          <div><strong>Authentic Products</strong><br>Every item is genuine and quality-verified before dispatch.</div>
+        </li>
+        <li class="why-item reveal reveal-delay-2">
+          <span class="why-check">✓</span>
+          <div><strong>Trusted Service</strong><br>Dependable sourcing tailored perfectly for students and working women.</div>
+        </li>
+        <li class="why-item reveal reveal-delay-3">
+          <span class="why-check">✓</span>
+          <div><strong>Direct Importation</strong><br>We source straight from China — no middlemen, better prices.</div>
+        </li>
+        <li class="why-item reveal reveal-delay-4">
+          <span class="why-check">✓</span>
+          <div><strong>Personalized Assistance</strong><br>We help you find exactly what you're looking for, fitting any budget.</div>
+        </li>
+      </ul>
+    </div>
+    <div class="why-right">
+      <span style="position:relative;z-index:1;filter:drop-shadow(0 20px 40px rgba(0,0,0,0.5))">✨</span>
+    </div>
+  </section>
+
+  <section class="contact-section" id="contact">
+    <p class="section-label reveal">Get In Touch</p>
+    <h2 class="section-title reveal reveal-delay-1">Place Your <em>Preorder</em></h2>
+    <p class="contact-sub reveal reveal-delay-2">Reach out via any of the channels below and let's get you looking your best.</p>
+    <div class="contact-links reveal reveal-delay-3">
+      <a href="https://wa.me/2347079430805" class="contact-link whatsapp">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.117 1.526 5.845L0 24l6.335-1.507A11.953 11.953 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.807 9.807 0 01-5.015-1.376l-.36-.214-3.76.894.937-3.657-.234-.375A9.817 9.817 0 012.182 12C2.182 6.58 6.58 2.182 12 2.182c5.42 0 9.818 4.398 9.818 9.818 0 5.42-4.398 9.818-9.818 9.818z"/></svg>
+        WhatsApp Us
+      </a>
+      <a href="https://instagram.com/preorderwithoma" class="contact-link instagram">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+        Instagram
+      </a>
+      <a href="tel:+2347079430805" class="contact-link phone">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.72A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.16 6.16l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+        Call Us
+      </a>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2024 <span>Preorder With Oma</span> — All Rights Reserved</p>
+  </footer>
+
+  <script>
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    reveals.forEach(el => observer.observe(el));
+
+    // Trigger hero on load
+    document.querySelectorAll('.hero .reveal').forEach((el, i) => {
+      setTimeout(() => el.classList.add('visible'), 200 + i * 150);
+    });
+  </script>
+</body>
+</html>
