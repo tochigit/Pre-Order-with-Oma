@@ -1,0 +1,48 @@
+﻿Pooler DNS
+Server:  dns.google
+Address:  8.8.8.8
+
+Name:    pool-tcp-euw21-e29fafe-44328019b6a559a9.elb.eu-west-2.amazonaws.com
+Addresses:  13.41.42.138
+	  13.41.127.111
+Aliases:  aws-1-eu-west-2.pooler.supabase.com
+
+
+Pooler TCP (hostname)
+
+
+ComputerName            : aws-1-eu-west-2.pooler.supabase.com
+RemoteAddress           : 13.41.42.138
+RemotePort              : 6543
+NameResolutionResults   : 13.41.42.138
+                          13.41.127.111
+MatchingIPsecRules      : 
+NetworkIsolationContext : Internet
+IsAdmin                 : False
+InterfaceAlias          : Wi-Fi
+SourceAddress           : 192.168.100.154
+NetRoute (NextHop)      : 192.168.100.1
+TcpTestSucceeded        : True
+
+
+
+
+Pooler TCP (ip)
+
+
+ComputerName            : 13.41.127.111
+RemoteAddress           : 13.41.127.111
+RemotePort              : 6543
+NameResolutionResults   : 13.41.127.111
+                          ec2-13-41-127-111.eu-west-2.compute.amazonaws.com
+MatchingIPsecRules      : 
+NetworkIsolationContext : Internet
+IsAdmin                 : False
+InterfaceAlias          : Wi-Fi
+SourceAddress           : 192.168.100.154
+NetRoute (NextHop)      : 192.168.100.1
+TcpTestSucceeded        : True
+
+
+
+
