@@ -22,7 +22,7 @@ interface Product {
 }
 
 const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "2347079430805";
-const INSTAGRAM_HANDLE = process.env.NEXT_PUBLIC_INSTAGRAM_HANDLE || "preorderwithoma";
+const INSTAGRAM_HANDLE = process.env.NEXT_PUBLIC_INSTAGRAM_HANDLE || "preo.rderwithoma";
 
 const categories = ["all", "handbags", "shoes", "accessories", "new_arrivals"] as const;
 type Category = (typeof categories)[number];
