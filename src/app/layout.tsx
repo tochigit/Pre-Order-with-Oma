@@ -22,6 +22,9 @@ export const metadata: Metadata = {
   title: "Preorder With Oma — Luxury Handbags, Shoes & Accessories",
   description:
     "Authentic luxury handbags, shoes, and accessories carefully sourced from China. Curated with an eye for elegance and quality you can trust. Perfect for students and working professionals.",
+  icons: {
+    icon: "/favicon.ico",
+  },
   keywords: [
     "luxury handbags",
     "designer shoes",
