@@ -38,6 +38,3 @@ next-env.d.ts
 
 # upload temp
 upload/
-
-# environment
-.env
