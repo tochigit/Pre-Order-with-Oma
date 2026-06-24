@@ -1,128 +1,157 @@
 import { NextRequest, NextResponse } from "next/server";
+import {
+  isAuthenticated,
+  checkMutationRateLimit,
+  getClientIP,
+  writeAuditLog,
+  auditContext,
+} from "@/lib/auth";
 import { createServerClient } from "@/lib/supabase/server";
 
-// Admin password check helper
-function isAdminAuthorized(request: NextRequest): boolean {
-  const authHeader = request.headers.get("x-admin-token");
-  const adminPassword = process.env.ADMIN_PASSWORD || "OmaAdmin2024!";
-  return authHeader === adminPassword;
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
+const ALLOWED_MIME = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/gif",
+]);
+
+const MAGIC_BYTES: Record<string, number[]> = {
+  "image/jpeg": [0xff, 0xd8, 0xff],
+  "image/png": [0x89, 0x50, 0x4e, 0x47],
+  "image/webp": [0x52, 0x49, 0x46, 0x46],
+  "image/gif": [0x47, 0x49, 0x46, 0x38],
+};
+
+function matchesMagic(fileBytes: Uint8Array, mime: string): boolean {
+  const expected = MAGIC_BYTES[mime];
+  if (!expected) return false;
+  if (fileBytes.length < expected.length) return false;
+  for (let i = 0; i < expected.length; i++) {
+    if (fileBytes[i] !== expected[i]) return false;
+  }
+  if (mime === "image/webp") {
+    if (fileBytes.length < 12) return false;
+    const tag = String.fromCharCode(
+      fileBytes[8],
+      fileBytes[9],
+      fileBytes[10],
+      fileBytes[11]
+    );
+    return tag === "WEBP";
+  }
+  return true;
 }
 
-// Allowed MIME types for product images
-const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-const STORAGE_BUCKET = "product-images";
+function safeExtFromMime(mime: string): string {
+  switch (mime) {
+    case "image/jpeg": return ".jpg";
+    case "image/png":  return ".png";
+    case "image/webp": return ".webp";
+    case "image/gif":  return ".gif";
+    default:           return "";
+  }
+}
 
 export async function POST(request: NextRequest) {
-  // Auth check
-  if (!isAdminAuthorized(request)) {
+  if (!isAuthenticated(request)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const ip = getClientIP(request);
+  const rl = checkMutationRateLimit(ip);
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: "Too many uploads. Slow down." },
+      { status: 429 }
+    );
+  }
+
+  let file: File | null = null;
   try {
     const formData = await request.formData();
-    const file = formData.get("file") as File | null;
+    file = formData.get("file") as File | null;
+  } catch {
+    return NextResponse.json({ error: "Invalid form data" }, { status: 400 });
+  }
 
-    if (!file) {
-      return NextResponse.json({ error: "No file provided" }, { status: 400 });
-    }
+  if (!file || !(file instanceof File)) {
+    return NextResponse.json({ error: "No file provided" }, { status: 400 });
+  }
 
-    // Validate file type
-    if (!ALLOWED_TYPES.includes(file.type)) {
-      return NextResponse.json(
-        { error: "Invalid file type. Please use JPEG, PNG, WebP, or GIF." },
-        { status: 400 }
-      );
-    }
+  if (file.size === 0) {
+    return NextResponse.json({ error: "File is empty" }, { status: 400 });
+  }
+  if (file.size > MAX_FILE_SIZE) {
+    return NextResponse.json(
+      { error: `File too large. Max ${MAX_FILE_SIZE / 1024 / 1024}MB.` },
+      { status: 413 }
+    );
+  }
 
-    // Validate file size
-    if (file.size > MAX_FILE_SIZE) {
-      return NextResponse.json(
-        { error: "File too large. Maximum size is 5MB." },
-        { status: 400 }
-      );
-    }
+  const claimedType = (file.type || "").toLowerCase();
+  if (!ALLOWED_MIME.has(claimedType)) {
+    return NextResponse.json(
+      { error: "Invalid file type. Allowed: JPEG, PNG, WebP, GIF." },
+      { status: 415 }
+    );
+  }
 
-    // Create Supabase server client
+  const arrayBuffer = await file.arrayBuffer();
+  const bytes = new Uint8Array(arrayBuffer);
+  if (!matchesMagic(bytes, claimedType)) {
+    return NextResponse.json(
+      { error: "File content does not match its declared type." },
+      { status: 415 }
+    );
+  }
+
+  const ext = safeExtFromMime(claimedType);
+  const randomName = `${crypto.randomUUID()}${ext}`;
+  const objectPath = `products/${randomName}`;
+
+  let publicUrl: string;
+  try {
     const supabase = createServerClient();
-
-    // Generate a unique file path: products/{timestamp}-{original-name}
-    const timestamp = Date.now();
-    const sanitizedName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
-    const filePath = `products/${timestamp}-${sanitizedName}`;
-
-    // Convert File to ArrayBuffer for upload
-    const arrayBuffer = await file.arrayBuffer();
-
-    // Upload to Supabase Storage
-    const { data, error } = await supabase.storage
-      .from(STORAGE_BUCKET)
-      .upload(filePath, arrayBuffer, {
-        contentType: file.type,
+    const { error: upErr } = await supabase.storage
+      .from("product-images")
+      .upload(objectPath, arrayBuffer, {
+        contentType: claimedType,
+        cacheControl: "3600",
         upsert: false,
       });
 
-    if (error) {
-      console.error("Supabase upload error:", error);
+    if (upErr) {
+      console.error("[upload] supabase upload error:", upErr);
       return NextResponse.json(
-        { error: `Upload failed: ${error.message}` },
+        { error: "Upload failed. Please try again." },
         { status: 500 }
       );
     }
 
-    // Get the public URL for the uploaded file
-    const { data: urlData } = supabase.storage
-      .from(STORAGE_BUCKET)
-      .getPublicUrl(filePath);
-
-    const publicUrl = urlData.publicUrl;
-
-    return NextResponse.json({
-      url: publicUrl,
-      path: data.path,
-    });
+    const { data: pub } = supabase.storage
+      .from("product-images")
+      .getPublicUrl(objectPath);
+    publicUrl = pub.publicUrl;
   } catch (err) {
-    console.error("Upload error:", err);
+    console.error("[upload] unexpected:", err);
     return NextResponse.json(
       { error: "Upload failed. Please try again." },
       { status: 500 }
     );
   }
-}
 
-// DELETE endpoint to remove an image from storage
-export async function DELETE(request: NextRequest) {
-  if (!isAdminAuthorized(request)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  await writeAuditLog({
+    action: "upload.image",
+    targetType: "image",
+    targetId: objectPath,
+    ...auditContext(request),
+    meta: {
+      size: file.size,
+      mime: claimedType,
+      bucket: "product-images",
+    },
+  });
 
-  try {
-    const { path } = await request.json();
-
-    if (!path) {
-      return NextResponse.json({ error: "No path provided" }, { status: 400 });
-    }
-
-    const supabase = createServerClient();
-
-    const { error } = await supabase.storage
-      .from(STORAGE_BUCKET)
-      .remove([path]);
-
-    if (error) {
-      console.error("Supabase delete error:", error);
-      return NextResponse.json(
-        { error: `Delete failed: ${error.message}` },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json({ success: true });
-  } catch (err) {
-    console.error("Delete error:", err);
-    return NextResponse.json(
-      { error: "Delete failed. Please try again." },
-      { status: 500 }
-    );
-  }
+  return NextResponse.json({ url: publicUrl, path: objectPath });
 }
